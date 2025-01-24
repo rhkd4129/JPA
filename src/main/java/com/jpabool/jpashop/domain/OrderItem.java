@@ -12,14 +12,14 @@ import lombok.Setter;
 public class OrderItem {
     @Id
     @SequenceGenerator(
-            name = "ORDER_SEQ",
-            sequenceName = "ORDER_SEQ",
+            name = "ORDER_ITEM_SEQ",
+            sequenceName = "ORDER_ITEM_SEQ",
             initialValue = 1,
             allocationSize = 1
     )
     @GeneratedValue(
             strategy= GenerationType.SEQUENCE,
-            generator = "ORDER_SEQ")
+            generator = "ORDER_ITEM_SEQ")
     @Column(name = "order_item_id")
     private Long id;
 
@@ -28,11 +28,11 @@ public class OrderItem {
 
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 

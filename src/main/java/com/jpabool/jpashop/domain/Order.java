@@ -3,19 +3,20 @@ package com.jpabool.jpashop.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Or;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
-@Table(name="orders")
+@Table(name = "orders")
+@Getter @Setter
 public class Order {
     @Id
     @SequenceGenerator(
-            name = "ORDER_SEQ",
+                name = "ORDER_SEQ",
             sequenceName = "ORDER_SEQ",
             initialValue = 1,
             allocationSize = 1
@@ -27,26 +28,57 @@ public class Order {
     private Long id;
 
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private  Member member;
+    private Member member; //주문 회원
 
 
 
-    @OneToMany(mappedBy = "order")
-    List<OrderItem> orderItemList = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
 
-    //order를 가지고 delivery를 찾을 일이 많아서 여기서 주인설정 /크게 상관은 x
-    @OneToOne
-    @JoinColumn(name="delivery_id")
-    private Delivery delivery;
 
-    private LocalDateTime orderDate;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery; //배송정보
+
+    private LocalDateTime orderDate; //주문시간
+
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderStatus status; //주문상태 [ORDER, CANCEL]
+
+    public void setMember(Member member){
+        this.member = member;
+        member.getOrderList().add(this);
+    }
+
+    public void setDelivery(Delivery delivery){
+        this.delivery = delivery;
+        delivery.setOrder(this);
+
+    }
+
+    public void addOrderItem(OrderItem orderItem){
+        orderItem.setOrder(this);
+        this.orderItems.add(orderItem);
+    }
 
 
+    public  static  Order createOrder(Member member ,Delivery delivery, OrderItem... orderItems ){
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for(OrderItem orderItem:orderItems){
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return  order;
+    }
+
+    //주문취소
 
 }
 //-- 먼저 현재 어떤 PDB를 사용하고 있는지 확인

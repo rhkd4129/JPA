@@ -2,3 +2,25 @@
 
 
 // 상속관계 매핑이여서 전략을 부모클래스에잡아준다 싱글테이블전략을 해서
+
+
+//TODO
+상품주문
+주문내역 조회
+
+주문취소
+
+BEGIN
+   FOR c IN (SELECT table_name FROM user_tables) LOOP
+      EXECUTE IMMEDIATE ('DROP TABLE ' || c.table_name || ' CASCADE CONSTRAINTS');
+   END LOOP;
+END;
+/
+
+-- 모든 시퀀스 삭제
+BEGIN
+   FOR c IN (SELECT sequence_name FROM user_sequences) LOOP
+      EXECUTE IMMEDIATE ('DROP SEQUENCE ' || c.sequence_name);
+   END LOOP;
+END;
+/

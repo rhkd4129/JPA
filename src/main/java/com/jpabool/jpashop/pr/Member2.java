@@ -1,16 +1,18 @@
-package com.jpabool.jpashop.domain;
+package com.jpabool.jpashop.pr;
 
+import com.jpabool.jpashop.domain.Address;
+import com.jpabool.jpashop.domain.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-@Entity
 @Getter
 @Setter
-public class Member {
+@Entity
+public class Member2{
+
     @Id
     @SequenceGenerator(
             name = "MEMBER_SEQ",
@@ -28,19 +30,14 @@ public class Member {
     private String name;
 
 
-    @Embedded
-    private Address address;
-
-
 
     @OneToMany(mappedBy = "member")
     private List<Order> orderList = new ArrayList<>();
 
 
-//    public void addOrder(Order order){
+    //    public void addOrder(Order order){
 //        order.setMember(this);
 //        orderList.add(order);
 //    }
-
-
+    {
 }
